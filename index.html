@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ملفي الشخصي — Gawdah</title>
+    <meta name="description"
+        content="صفحة ملف شخصي متحركة مع 10 صناديق تفاعلية. استبدل ./me.jpg بصورتك." />
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- GSAP for advanced animation, VanillaTilt for tilt effect, mo.js for name animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Reset-ish */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html,
+        body,
+        #app {
+            height: 100%
+        }
+
+        body {
+            font-family: 'Cairo', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 45%, #a2ffb2 100%);
+            color: #1e293b;
+            background-attachment: fixed;
+        }
+
+        /* layout */
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 24px;
+            padding-top: 40px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 1100px;
+            background: linear-gradient(180deg, rgb(242, 255, 237), rgba(255,255,255,0.8));
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* animated blobs */
+        .blob {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            filter: blur(72px);
+            opacity: 0.85;
+            mix-blend-mode: screen
+        }
+
+        .blob.a {
+            background: radial-gradient(circle at 30% 30%, #8b5cf6 30%, transparent 40%);
+            top: -160px;
+            left: -160px;
+            animation: floatA 12s ease-in-out infinite
+        }
+
+        .blob.b {
+            background: radial-gradient(circle at 70% 70%, #06b6d4 30%, transparent 40%);
+            right: -120px;
+            top: 40px;
+            animation: floatB 10s ease-in-out infinite
+        }
+
+        .blob.c {
+            background: radial-gradient(circle at 50% 50%, #f97316 20%, transparent 40%);
+            left: 40%;
+            bottom: -180px;
+            animation: floatC 14s ease-in-out infinite
+        }
+
+        @keyframes floatA {
+            0% {
+                transform: translateY(0) scale(1)
+            }
+
+            50% {
+                transform: translateY(-40px) scale(1.04)
+            }
+
+            100% {
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        @keyframes floatB {
+            0% {
+                transform: translateY(0) scale(1)
+            }
+
+            50% {
+                transform: translateY(-30px) scale(1.02)
+            }
+
+            100% {
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        @keyframes floatC {
+            0% {
+                transform: translateY(0) scale(1)
+            }
+
+            50% {
+                transform: translateY(-60px) scale(1.06)
+            }
+
+            100% {
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        /* header area */
+        .top {
+            display: flex;
+            gap: 24px;
+            align-items: center
+        }
+
+        .photo {
+            width: 140px;
+            height: 140px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+            flex-shrink: 0;
+            position: relative
+        }
+
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block
+        }
+
+        .badge {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -18px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 18px;
+            background: transparent
+        }
+
+        /* RTL specific tweaks */
+        [dir="rtl"] .top { flex-direction: row-reverse }
+        [dir="rtl"] .box .arrow { transform: translateX(0) rotate(180deg) }
+        [dir="rtl"] .box .topRow { flex-direction: row-reverse }
+        [dir="rtl"] .box:hover .arrow { transform: translateX(-6px) rotate(180deg) }
+
+        .neon-name {
+            display: flex;
+            gap: 6px
+        }
+
+        .neon-letter {
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 8px #8b5cf6, 0 0 18px #06b6d4, 0 0 28px rgba(249, 115, 22, .6)
+        }
+
+        .intro {
+            flex: 1
+        }
+
+        .intro h1 {
+            font-size: 26px;
+            line-height: 1.05;
+            margin-bottom: 8px
+        }
+
+        .intro p {
+            color: rgba(30, 41, 59, 0.75);
+            font-size: 14px
+        }
+
+        .cta {
+            margin-top: 14px
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.06);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            cursor: pointer;
+            color: #1e293b;
+        }
+
+        /* grid of boxes */
+        .grid {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr;
+            gap: 10px;
+            min-height: 400px;
+        }
+
+        /* stats row */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+            align-items: stretch;
+        }
+
+        .stat {
+            background: linear-gradient(180deg, rgba(109, 202, 228, 0.8), rgba(255,255,255,0.6));
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .stat .count {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .stat .label {
+            font-size: 13px;
+            color: rgba(30, 41, 59, 0.75);
+        }
+
+        .box {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+            padding: 14px;
+            border-radius: 12px;
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transform-origin: center center;
+            color: #1e293b;
+        }
+
+        .box.large {
+            min-height: 300px;
+            grid-column: 3;
+            grid-row: 1 / 3;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .box .topRow {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .box .num {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(59, 130, 246, 0.14));
+        }
+
+        .box .title {
+            font-weight: 600
+        }
+
+        .box .meta {
+            font-size: 12px;
+            color: rgba(30, 41, 59, 0.6)
+        }
+
+        .box .arrow {
+            width: 22px;
+            height: 22px;
+            opacity: 0.8;
+            transform: translateX(0);
+            transition: transform .28s
+        }
+
+        .box:hover .arrow {
+            transform: translateX(6px)
+        }
+
+        /* responsive */
+        @media (max-width:1000px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr)
+            }
+            /* place large box at the right-most column on medium screens */
+            .box.large { grid-column: -2 / -1; height: 220px }
+
+            .photo {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
+        @media (max-width:640px) {
+            .top {
+                flex-direction: column;
+                align-items: flex-start
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            /* small screens: place large box on the right-most column */
+            .box.large { grid-column: -2 / -1; height: 200px }
+
+            .photo {
+                width: 96px;
+                height: 96px
+            }
+        }
+
+        /* small flourish */
+        .footer {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            color: rgba(30, 41, 59, 0.7);
+            font-size: 13px
+        }
+
+        /* Live cursor trail */
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #8b5cf6, transparent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.7;
+            animation: fade 0.8s ease-out forwards
+        }
+
+        @keyframes fade {
+            to {
+                opacity: 0;
+                transform: scale(0)
+            }
+        }
+
+        /* Breathing glow effect */
+        .breathing-glow {
+            animation: breathe 3s ease-in-out infinite
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.3)
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(139, 92, 246, 0.6), 0 0 60px rgba(6, 182, 212, 0.4)
+            }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-up 4s linear infinite
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-200px) scale(0)
+            }
+        }
+
+        /* Animated icons for mobile block */
+        .animated-icons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            animation: live-pulse 2s ease-in-out infinite;
+        }
+
+        .animated-icons i {
+            color: #8b5cf6;
+        }
+
+        @keyframes live-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Floating logo */
+        .floating-logo {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+            font-size: 40px;
+            color: #36b54c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    <style>
+        /* LOADER STYLES */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #020617;
+            overflow: hidden
+        }
+
+        .loader-bg {
+            position: absolute;
+            inset: -40%;
+            background: radial-gradient(circle at center, rgba(139, 92, 246, .18), transparent 40%);
+            filter: blur(80px);
+            animation: spin 12s linear infinite
+        }
+
+        .loader-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px
+        }
+
+        .ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, .08);
+            border-top-color: #8b5cf6;
+            animation: rotate 1.2s linear infinite
+        }
+
+        .text {
+            letter-spacing: 2px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, .8)
+        }
+
+        .bar {
+            width: 220px;
+            height: 4px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .bar span {
+            display: block;
+            height: 100%;
+            width: 40%;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            animation: load 1.5s ease-in-out infinite
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @keyframes load {
+            0% {
+                transform: translateX(-100%)
+            }
+
+            100% {
+                transform: translateX(280%)
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- MOBILE BLOCK -->
+    <div id="mobileBlock"
+        style="display:none;position:fixed;inset:0;z-index:99999;background:#020617;color:#fff;text-align:center;padding:40px 20px;font-family:'Cairo',Inter,sans-serif">
+        <div style="max-width:400px;margin:0 auto;margin-top:20vh">
+            <div class="animated-icons">
+                <i class="fas fa-mobile-screen-button fa-4x"></i>
+                <i class="fas fa-ban fa-4x"></i>
+            </div>
+            <h2 style="font-size:24px;margin-bottom:16px;color:#8b5cf6">عذراً، هذا الموقع غير متاح على الموبايل</h2>
+            <p style="font-size:16px;line-height:1.6;color:rgba(255,255,255,0.8);margin-bottom:24px">يرجى فتح الموقع على
+                شاشة أكبر مثل الكمبيوتر أو الآيباد للحصول على أفضل تجربة</p>
+            <div
+                style="padding:16px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:12px;font-size:14px;color:rgba(255,255,255,0.7)">
+                الحد الأدنى لعرض الشاشة: 768 بكسل
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADER -->
+    <div id="loader">
+        <div class="loader-bg"></div>
+        <div class="loader-content">
+            <div class="ring"></div>
+            <div class="text">جاري تحميل التجربة</div>
+            <div class="bar"><span></span></div>
+        </div>
+    </div>
+
+    <div id="app" class="wrap">
+        <div class="card" id="mainCard">
+
+            <!-- blobs -->
+            <div class="blob a" aria-hidden="true"></div>
+            <div class="blob b" aria-hidden="true"></div>
+            <div class="blob c" aria-hidden="true"></div>
+
+            <div class="top">
+                <div class="photo" id="photoWrap">
+                    <!-- Put your photo at ./me.jpg -->
+                    <img src="my pic.jpg" alt="my photo" id="profilePhoto" />
+                    <div class="badge neon-name" id="nameBadge" aria-label="Mike"></div>
+                </div>
+
+                <div class="intro">
+                    <h1 id="title">مرحباً — هذا ملفي الشخصي المتحرك</h1>
+                    <p id="subtitle">في الأسفل يوجد 8 صناديق تفاعلية. مرّر، مرِّر بالماوس، واستمتع بالمؤثرات — استبدل الصورة بصورتك.</p>
+                    <div class="cta"><button class="btn" id="exploreBtn">استكشاف الصناديق</button></div>
+                </div>
+            </div>
+
+            <div class="stats" id="statsRow">
+                <div class="stat">
+                    <div class="count" data-target="500">0</div>
+                    <div class="label">إحصاء 1</div>
+                </div>
+                <div class="stat">
+                    <div class="count" data-target="500">0</div>
+                    <div class="label">إحصاء 2</div>
+                </div>
+                <div class="stat">
+                    <div class="count" data-target="500">0</div>
+                    <div class="label">إحصاء 3</div>
+                </div>
+                <div class="stat">
+                    <div class="count" data-target="500">0</div>
+                    <div class="label">إحصاء 4</div>
+                </div>
+            </div>
+
+            <div class="grid" id="boxes">
+                <!-- large card placed in HTML (رقم 4) -->
+                <div class="box large" data-index="4" tabindex="0">
+                    <div class="topRow">
+                        <div class="num">4</div>
+                        <div>
+                            <div class="title">الكارت المميز</div>
+                            <div class="meta">تفاصيل سريعة</div>
+                        </div>
+                    </div>
+                    <div dir="rtl" style="display:flex;flex-direction:column;justify-content:space-between;gap:8px;height:100%">
+                        <div style="font-size:14px;color:rgba(30,41,59,0.85)">محتوى إضافي للكارت الكبير</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div style="font-size:12px;color:rgba(30,41,59,0.65)">عرض المحتوى</div>
+                            <svg class="arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <!-- other boxes generated by JS -->
+            </div>
+
+            <div class="footer">
+                <div>مصنوع بـ ✨ Gawdah</div>
+                <div>— اسحب / حرّك الماوس لرؤية المؤثرات</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+                // Folder mapping for boxes (now 8)
+                const folderMap = {
+                    1: 'first/index.html',
+                    2: 'second/index.html',
+                    3: 'third/index.html',
+                    4: 'fourth/index.html',
+                    5: 'fifth/index.html',
+                    6: 'sixth/index.html',
+                    7: 'seventh/index.html',
+                    8: 'eighth/index.html'
+                }
+
+                // Create 7 boxes (skip 4 because it is in HTML)
+                const boxesEl = document.getElementById('boxes')
+                for (let i = 1; i <= 8; i++) {
+                        if (i === 4) continue // large card is static in HTML
+                        const box = document.createElement('div')
+                        box.style.cursor = 'pointer'
+                        box.className = 'box'
+                        box.innerHTML = `
+                <div class="topRow">
+                    <div class="num">${i}</div>
+                    <div>
+                        <div class="title">الصندوق ${i}</div>
+                        <div class="meta">انقر للفتح</div>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div style="font-size:12px;color:rgba(30,41,59,0.65)">عرض المحتوى</div>
+                    <svg class="arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+            `
+                        boxesEl.appendChild(box)
+                }
+
+                // Attach navigation handler to all boxes based on their number
+                document.querySelectorAll('.box').forEach((el) => {
+                    const numEl = el.querySelector('.num')
+                    const idx = numEl ? parseInt(numEl.textContent) : null
+                    if (idx && folderMap[idx]) {
+                        el.addEventListener('click', () => { window.location.href = folderMap[idx] })
+                    }
+                })
+
+        // Apply VanillaTilt to photo and boxes for parallax tilt
+        VanillaTilt.init(document.querySelectorAll('.photo'), {
+            max: 12,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.15
+        })
+        VanillaTilt.init(document.querySelectorAll('.box'), {
+            max: 10,
+            speed: 400,
+            glare: false,
+            scale: 1.03
+        })
+
+        // GSAP entrance animations
+        const xDir = document.documentElement.dir === 'rtl' ? 20 : -20
+        gsap.from('#mainCard', { duration: 1.1, y: 20, opacity: 0, ease: 'power3.out' })
+        gsap.from('.photo', { duration: 1.2, x: xDir, opacity: 0, delay: 0.15, ease: 'elastic.out(1,0.6)' })
+        gsap.from('.intro h1', { duration: 1, x: xDir, opacity: 0, delay: 0.25, ease: 'power3.out' })
+        gsap.from('.intro p', { duration: 0.9, y: 10, opacity: 0, delay: 0.35 })
+
+        // stagger boxes
+        gsap.from('.box', { duration: 0.9, y: 18, opacity: 0, stagger: { each: 0.06 }, delay: 0.45, ease: 'back.out(1.3)' })
+
+        // hover pulse using small GSAP timeline on mouseenter/mouseleave
+        document.querySelectorAll('.box').forEach((el) => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(el, { scale: 1.04, duration: 0.35, ease: 'power2.out' })
+            })
+            el.addEventListener('mouseleave', () => {
+                gsap.to(el, { scale: 1, duration: 0.45, ease: 'elastic.out(1,0.6)' })
+            })
+
+            // click action: quick bounce + ripple effect
+            el.addEventListener('click', () => {
+                gsap.fromTo(el, { y: -6 }, { y: 0, duration: 0.5, ease: 'bounce.out' })
+            })
+        })
+
+        // connect 'Explore' button to scroll to grid
+        document.getElementById('exploreBtn').addEventListener('click', () => {
+            document.getElementById('boxes').scrollIntoView({ behavior: 'smooth', block: 'center' })
+            // micro animation to call attention
+            gsap.fromTo('.box', { scale: 1 }, { scale: 1.01, duration: 0.25, yoyo: true, repeat: 1, stagger: 0.02 })
+        })
+
+        // Cinematic name animation: letter-by-letter using mo.js (runs once after loader)
+        const nameContainer = document.getElementById('nameBadge');
+        const NAME = 'Gawdah'.split('');
+        const letters = [];
+
+        NAME.forEach((ch) => {
+            const span = document.createElement('span');
+            span.className = 'neon-letter';
+            span.textContent = ch;
+            span.style.opacity = '0';
+            nameContainer.appendChild(span);
+            letters.push(span);
+        });
+
+        function explodeLetter(letter) {
+            const burst = new mojs.Burst({
+                parent: letter,
+                radius: { 0: 70 },
+                count: 12,
+                angle: { 0: 180 },
+                children: {
+                    shape: 'polygon',
+                    points: 5,
+                    radius: { 6: 0 },
+                    fill: ['#8b5cf6', '#06b6d4', '#f97316'],
+                    duration: 1300,
+                    easing: 'cubic.out'
+                }
+            });
+            burst.play();
+        }
+
+        function playCinematicName() {
+            letters.forEach((l, i) => {
+                gsap.to(l, {
+                    opacity: 1,
+                    y: [20, 0],
+                    scale: [0.4, 1],
+                    duration: 0.9,
+                    delay: 0.35 + i * 0.25,
+                    ease: 'expo.out',
+                    onStart: () => explodeLetter(l)
+                });
+            });
+        }
+
+        window.addEventListener('name:play', playCinematicName);
+
+        // Counters: animate 4 stats from 0 to their target (500)
+        function playCounters() {
+            const counts = document.querySelectorAll('.count')
+            counts.forEach((el) => {
+                const target = parseInt(el.getAttribute('data-target')) || 0
+                const obj = { val: 0 }
+                gsap.to(obj, {
+                    val: target,
+                    duration: 2.2,
+                    ease: 'power3.out',
+                    onUpdate: function() {
+                        el.textContent = Math.floor(obj.val).toLocaleString('ar-EG')
+                    }
+                })
+            })
+        }
+
+        // Small interactive badge: allow editing name by double click
+        const badge = document.getElementById('nameBadge')
+        badge.addEventListener('dblclick', () => {
+            const name = prompt('أدخل اسم العرض:', badge.textContent) || badge.textContent
+            badge.textContent = name
+        })
+
+        // Accessibility: keyboard focus styles + enter to click
+        document.querySelectorAll('.box').forEach((b) => {
+            b.setAttribute('tabindex', '0')
+            b.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') b.click()
+            })
+            b.addEventListener('focus', () => gsap.to(b, { scale: 1.03, duration: 0.25 }))
+            b.addEventListener('blur', () => gsap.to(b, { scale: 1, duration: 0.25 }))
+        })
+
+        // If image fails to load, show placeholder
+        const img = document.getElementById('profilePhoto')
+        img.onerror = () => { img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="100%" height="100%" fill="%23071a2a"/><text x="50%" y="50%" fill="%23fff" font-size="36" dominant-baseline="middle" text-anchor="middle">أضف me.jpg بجانب هذا الملف</text></svg>' }
+
+        // Add breathing glow to photo
+        document.querySelector('.photo').classList.add('breathing-glow')
+
+        // Cursor trail effect
+        let trails = []
+        document.addEventListener('mousemove', (e) => {
+            const trail = document.createElement('div')
+            trail.className = 'cursor-trail'
+            trail.style.left = e.clientX + 'px'
+            trail.style.top = e.clientY + 'px'
+            document.body.appendChild(trail)
+            trails.push(trail)
+            setTimeout(() => {
+                trail.remove()
+                trails = trails.filter(t => t !== trail)
+            }, 800)
+        })
+
+        // Floating particles from boxes on hover
+        document.querySelectorAll('.box').forEach(box => {
+            box.addEventListener('mouseenter', () => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div')
+                        particle.className = 'particle'
+                        const rect = box.getBoundingClientRect()
+                        particle.style.left = (rect.left + Math.random() * rect.width) + 'px'
+                        particle.style.top = rect.bottom + 'px'
+                        particle.style.background = ['#8b5cf6', '#06b6d4', '#f97316'][Math.floor(Math.random() * 3)]
+                        document.body.appendChild(particle)
+                        setTimeout(() => particle.remove(), 4000)
+                    }, i * 200)
+                }
+            })
+        })
+
+        // Auto-animate boxes periodically
+        setInterval(() => {
+            const all = document.querySelectorAll('.box')
+            const randomBox = all[Math.floor(Math.random() * all.length)]
+            if (randomBox) gsap.to(randomBox, { y: -3, duration: 0.3, yoyo: true, repeat: 1, ease: 'power2.out' })
+        }, 8000)
+
+        // Create floating logos
+        function createFloatingLogo() {
+            const logo = document.createElement('div')
+            logo.className = 'floating-logo'
+            logo.innerHTML = '✨'
+            logo.style.left = Math.random() * window.innerWidth + 'px'
+            logo.style.top = Math.random() * window.innerHeight + 'px'
+            document.body.appendChild(logo)
+
+            function animateLogo() {
+                gsap.to(logo, {
+                    x: (Math.random() - 0.5) * 200,
+                    y: (Math.random() - 0.5) * 200,
+                    rotation: Math.random() * 360,
+                    scale: 0.5 + Math.random() * 0.5,
+                    duration: 3 + Math.random() * 4,
+                    ease: 'power2.inOut',
+                    onComplete: animateLogo
+                })
+            }
+            animateLogo()
+
+            setTimeout(() => {
+                gsap.to(logo, { opacity: 0, duration: 1, onComplete: () => logo.remove() })
+            }, 30000)
+        }
+
+        setInterval(createFloatingLogo, 5000)
+        createFloatingLogo()
+
+        // Parallax scroll effect for blobs
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset
+            const blobs = document.querySelectorAll('.blob')
+            blobs.forEach((blob, i) => {
+                const speed = 0.5 + i * 0.2
+                blob.style.transform = `translateY(${scrolled * speed}px)`
+            })
+        })
+
+    </script>
+    <script>
+        // MOBILE DETECTION AND BLOCK
+        function checkScreenSize() {
+            if (window.innerWidth < 768) {
+                document.getElementById('mobileBlock').style.display = 'block'
+                document.getElementById('app').style.display = 'none'
+                document.getElementById('loader').style.display = 'none'
+            } else {
+                document.getElementById('mobileBlock').style.display = 'none'
+                document.getElementById('app').style.display = 'flex'
+            }
+        }
+        checkScreenSize()
+        window.addEventListener('resize', checkScreenSize)
+
+        // LOADER ANIMATION
+        window.addEventListener('load', () => {
+            gsap.to('#loader', {
+                opacity: 0, scale: 1.1, duration: 0.8, ease: 'power3.inOut', onComplete: () => {
+                    document.getElementById('loader').style.display = 'none';
+                    window.dispatchEvent(new Event('name:play'));
+                    // start counters after loader
+                    try { playCounters() } catch (e) { /* ignore if missing */ }
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>
