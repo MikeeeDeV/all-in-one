@@ -244,6 +244,13 @@
             border: 1px solid rgba(0,0,0,0.08);
         }
 
+        .stat .title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
         .stat .count {
             font-size: 22px;
             font-weight: 700;
@@ -522,24 +529,28 @@
                 <div class="intro">
                     <h1 id="title">اكتب اى هنا يا دكتور يحى و معلش اتأخرت كنت بعمل حاجه فى اللون</h1>
                     <p id="subtitle">في الأسفل يوجد 8 صناديق تفاعلية. مرّر، مرِّر بالماوس، واستمتع بالمؤثرات — استبدل الصورة بصورتك.</p>
-                    <div class="cta"><button class="btn" id="exploreBtn">استكشاف الصناديق</button></div>
+
                 </div>
             </div>
 
             <div class="stats" id="statsRow">
                 <div class="stat">
+                    <div class="title">عنوان 1</div>
                     <div class="count" data-target="500">0</div>
                     <div class="label">عداد رقم1</div>
                 </div>
                 <div class="stat">
+                    <div class="title">عنوان 2</div>
                     <div class="count" data-target="500">0</div>
                     <div class="label">عداد رقم2</div>
                 </div>
                 <div class="stat">
+                    <div class="title">عنوان 3</div>
                     <div class="count" data-target="500">0</div>
                     <div class="label">عداد رقم3</div>
                 </div>
                 <div class="stat">
+                    <div class="title">عنوان 4</div>
                     <div class="count" data-target="500">0</div>
                     <div class="label">عداد رقم4</div>
                 </div>
@@ -658,12 +669,7 @@
             })
         })
 
-        // connect 'Explore' button to scroll to grid
-        document.getElementById('exploreBtn').addEventListener('click', () => {
-            document.getElementById('boxes').scrollIntoView({ behavior: 'smooth', block: 'center' })
-            // micro animation to call attention
-            gsap.fromTo('.box', { scale: 1 }, { scale: 1.01, duration: 0.25, yoyo: true, repeat: 1, stagger: 0.02 })
-        })
+
 
         // Cinematic name animation: letter-by-letter using mo.js (runs once after loader)
         const nameContainer = document.getElementById('nameBadge');
@@ -724,7 +730,7 @@
                     duration: 2.2,
                     ease: 'power3.out',
                     onUpdate: function() {
-                        el.textContent = Math.floor(obj.val).toLocaleString('ar-EG')
+                        el.textContent = Math.floor(obj.val).toLocaleString('en-US')
                     }
                 })
             })
@@ -837,6 +843,8 @@
             window.dispatchEvent(new Event('name:play'));
             // start counters after load
             try { playCounters() } catch (e) { /* ignore if missing */ }
+            
+
         })
     </script>
 </body>
