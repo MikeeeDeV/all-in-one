@@ -45,8 +45,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 24px;
-            padding-top: 40px;
+            padding: 60px 24px;
         }
 
         .card {
@@ -444,19 +443,14 @@
             }
         }
 
-        /* Floating logo */
+        /* Floating SVG logo */
         .floating-logo {
             position: fixed;
             width: 60px;
             height: 60px;
-            opacity: 0.1;
+            opacity: 0.3;
             pointer-events: none;
-            z-index: 1;
-            font-size: 40px;
-            color: #36b54c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            z-index: 9998;
         }
     </style>
     <style>
@@ -583,7 +577,7 @@
             <div class="top">
                 <div class="photo" id="photoWrap">
                     <!-- Put your photo at ./me.jpg -->
-                    <img src="my pic.jpg" alt="my photo" id="profilePhoto" />
+                    <img src="media.png" alt="my photo" id="profilePhoto" />
                     <div class="badge neon-name" id="nameBadge" aria-label="Mike"></div>
                 </div>
 
@@ -597,19 +591,19 @@
             <div class="stats" id="statsRow">
                 <div class="stat">
                     <div class="count" data-target="500">0</div>
-                    <div class="label">إحصاء 1</div>
+                    <div class="label">عداد رقم1</div>
                 </div>
                 <div class="stat">
                     <div class="count" data-target="500">0</div>
-                    <div class="label">إحصاء 2</div>
+                    <div class="label">عداد رقم2</div>
                 </div>
                 <div class="stat">
                     <div class="count" data-target="500">0</div>
-                    <div class="label">إحصاء 3</div>
+                    <div class="label">عداد رقم3</div>
                 </div>
                 <div class="stat">
                     <div class="count" data-target="500">0</div>
-                    <div class="label">إحصاء 4</div>
+                    <div class="label">عداد رقم4</div>
                 </div>
             </div>
 
@@ -635,8 +629,8 @@
             </div>
 
             <div class="footer">
-                <div>مصنوع بـ ✨ Gawdah</div>
-                <div>— اسحب / حرّك الماوس لرؤية المؤثرات</div>
+                <div>مصنوع بـ ❤️ Gawdah</div
+                <div>© الحقوق محفوظة لـ Gawdah</div>
             </div>
         </div>
     </div>
@@ -861,36 +855,6 @@
             if (randomBox) gsap.to(randomBox, { y: -3, duration: 0.3, yoyo: true, repeat: 1, ease: 'power2.out' })
         }, 8000)
 
-        // Create floating logos
-        function createFloatingLogo() {
-            const logo = document.createElement('div')
-            logo.className = 'floating-logo'
-            logo.innerHTML = '✨'
-            logo.style.left = Math.random() * window.innerWidth + 'px'
-            logo.style.top = Math.random() * window.innerHeight + 'px'
-            document.body.appendChild(logo)
-
-            function animateLogo() {
-                gsap.to(logo, {
-                    x: (Math.random() - 0.5) * 200,
-                    y: (Math.random() - 0.5) * 200,
-                    rotation: Math.random() * 360,
-                    scale: 0.5 + Math.random() * 0.5,
-                    duration: 3 + Math.random() * 4,
-                    ease: 'power2.inOut',
-                    onComplete: animateLogo
-                })
-            }
-            animateLogo()
-
-            setTimeout(() => {
-                gsap.to(logo, { opacity: 0, duration: 1, onComplete: () => logo.remove() })
-            }, 30000)
-        }
-
-        setInterval(createFloatingLogo, 5000)
-        createFloatingLogo()
-
         // Parallax scroll effect for blobs
         window.addEventListener('scroll', () => {
             const scrolled = window.pageYOffset
@@ -900,6 +864,71 @@
                 blob.style.transform = `translateY(${scrolled * speed}px)`
             })
         })
+
+        // Create single floating SVG logo
+        const logo = document.createElement('img')
+        logo.className = 'floating-logo'
+        logo.src = 'logo-green.svg'
+        logo.style.cssText = `
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.3;
+            left: 50px;
+            top: 50px;
+        `
+        document.body.appendChild(logo)
+
+        // Continuous floating animation - stay within screen bounds
+        function animateLogo() {
+            const maxX = window.innerWidth - 60
+            const maxY = window.innerHeight - 60
+            gsap.to(logo, {
+                x: Math.random() * maxX,
+                y: Math.random() * maxY,
+                rotation: Math.random() * 360,
+                duration: 8,
+                ease: 'power2.inOut',
+                onComplete: animateLogo
+            })
+        }
+        animateLogo()
+
+        // Mouse interaction with logo - repulsion effect
+        document.addEventListener('mousemove', (e) => {
+            const rect = logo.getBoundingClientRect()
+            const logoX = rect.left + rect.width / 2
+            const logoY = rect.top + rect.height / 2
+            const distance = Math.sqrt((e.clientX - logoX) ** 2 + (e.clientY - logoY) ** 2)
+            
+            if (distance < 120) {
+                const angle = Math.atan2(logoY - e.clientY, logoX - e.clientX)
+                const force = (120 - distance) / 120
+                const moveX = Math.cos(angle) * force * 60
+                const moveY = Math.sin(angle) * force * 60
+                
+                // Ensure logo stays within screen bounds
+                const currentX = gsap.getProperty(logo, 'x') || 0
+                const currentY = gsap.getProperty(logo, 'y') || 0
+                const newX = Math.max(0, Math.min(window.innerWidth - 60, currentX + moveX))
+                const newY = Math.max(0, Math.min(window.innerHeight - 60, currentY + moveY))
+                
+                gsap.to(logo, {
+                    x: newX,
+                    y: newY,
+                    scale: 1.2,
+                    rotation: `+=${force * 90}`,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                })
+            } else {
+                gsap.to(logo, { scale: 1, duration: 0.4 })
+            }
+        })
+
+
 
     </script>
     <script>
