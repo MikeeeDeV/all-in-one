@@ -172,7 +172,7 @@
         }
 
         /* RTL specific tweaks */
-        [dir="rtl"] .top { flex-direction: row-reverse }
+        .top { flex-direction: row }
         [dir="rtl"] .box .arrow { transform: translateX(0) rotate(180deg) }
         [dir="rtl"] .box .topRow { flex-direction: row-reverse }
         [dir="rtl"] .box:hover .arrow { transform: translateX(-6px) rotate(180deg) }
@@ -222,9 +222,11 @@
         .grid {
             margin-top: 20px;
             display: grid;
-            grid-template-columns: 1fr 1fr 2fr;
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
             min-height: 400px;
+            justify-items: center;
+            align-items: start;
         }
 
         /* stats row */
@@ -267,6 +269,7 @@
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
             padding: 14px;
             border-radius: 12px;
+            width: 180px;
             height: 130px;
             display: flex;
             flex-direction: column;
@@ -278,11 +281,14 @@
         }
 
         .box.large {
-            min-height: 300px;
-            grid-column: 3;
-            grid-row: 1 / 3;
-            padding: 16px;
+            width: 380px;
+            height: 280px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(136, 250, 134, 0.8));
+            grid-column: span 2;
+            padding: 20px;
             border-radius: 12px;
+            border: 3px solid #22c55e;
+            box-shadow: 0 8px 28px rgba(34, 197, 94, 0.2);
         }
 
         .box .topRow {
@@ -299,6 +305,13 @@
             place-items: center;
             font-weight: 700;
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(59, 130, 246, 0.14));
+            overflow: hidden;
+        }
+
+        .box .num img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
         }
 
         .box .title {
@@ -325,11 +338,14 @@
         /* responsive */
         @media (max-width:1000px) {
             .grid {
-                grid-template-columns: repeat(3, 1fr)
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 15px;
             }
-            /* place large box at the right-most column on medium screens */
-            .box.large { grid-column: -2 / -1; height: 220px }
-
+            .box.large { 
+                width: 100%;
+                max-width: 350px;
+                grid-column: span 2;
+            }
             .photo {
                 width: 140px;
                 height: 140px;
@@ -341,14 +357,19 @@
                 flex-direction: column;
                 align-items: flex-start
             }
-
             .grid {
-                grid-template-columns: repeat(2, 1fr)
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
             }
-
-            /* small screens: place large box on the right-most column */
-            .box.large { grid-column: -2 / -1; height: 200px }
-
+            .box.large { 
+                grid-column: span 2;
+                width: 100%;
+                height: 220px;
+            }
+            .box {
+                width: 100%;
+                min-width: 150px;
+            }
             .photo {
                 width: 96px;
                 height: 96px
@@ -453,7 +474,6 @@
         /* LOGO BOX STYLES */
         .logo-box {
             width: 140px;
-            height: 140px;
             border-radius: 16px;
             overflow: hidden;
             border: 2px solid rgba(255, 255, 255, 0.08);
@@ -462,8 +482,10 @@
             position: relative;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 12px 8px 8px 8px;
         }
 
         .logo-box img {
@@ -472,7 +494,19 @@
             object-fit: contain;
             display: block;
         }
-    </style>
+
+        .platform-badge {
+            background: #22c55e;
+            color: white;
+            padding: 1% 2px 2px 2px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+            margin: 1px 10px 0px 10px;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+        }
+    </style>    
 </head>
 
 <body>
@@ -513,52 +547,53 @@
 
                 <div class="logo-box" id="logoBox">
                     <img src="logo-green.svg" alt="Logo" id="logoImage" />
+                    <div class="platform-badge">منصة جودة</div>
                 </div>
 
                 <div class="intro">
-                    <h1 id="title">اكتب اى هنا يا دكتور يحى و معلش اتأخرت كنت بعمل حاجه فى اللون</h1>
-                    <p id="subtitle">في الأسفل يوجد 8 صناديق تفاعلية. مرّر، مرِّر بالماوس، واستمتع بالمؤثرات — استبدل الصورة بصورتك.</p>
+                    <h1 id="title">هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة</h1>
+                    <p id="subtitle">هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى.</p>
 
                 </div>
             </div>
 
             <div class="stats" id="statsRow">
                 <div class="stat">
-                    <div class="title">عنوان 1</div>
+                    <div class="title">عنوان</div>
                     <div class="count" data-target="500">0</div>
-                    <div class="label">عداد رقم1</div>
+                    <div class="label">وصف</div>
                 </div>
                 <div class="stat">
-                    <div class="title">عنوان 2</div>
+                    <div class="title">محتوى</div>
                     <div class="count" data-target="500">0</div>
-                    <div class="label">عداد رقم2</div>
+                    <div class="label">نص</div>
                 </div>
                 <div class="stat">
-                    <div class="title">عنوان 3</div>
+                    <div class="title">مثال</div>
                     <div class="count" data-target="500">0</div>
-                    <div class="label">عداد رقم3</div>
+                    <div class="label">تجريبي</div>
                 </div>
                 <div class="stat">
-                    <div class="title">عنوان 4</div>
+                    <div class="title">نموذج</div>
                     <div class="count" data-target="500">0</div>
-                    <div class="label">عداد رقم4</div>
+                    <div class="label">عربي</div>
                 </div>
             </div>
 
             <div class="grid" id="boxes">
                 <!-- large card placed in HTML (رقم 4) -->
                 <div class="box large" data-index="4" tabindex="0">
-                    <div class="topRow">
-                        <div class="num">4</div>
-                        <div>
+                    <div class="topRow" dir="rtl" style="justify-content: flex-start">
+                        <div style="text-align: right; flex: 1">
                             <div class="title">الكارت المميز</div>
-                            <div class="meta">تفاصيل سريعة</div>
+                            <div class="meta">نص تجريبي</div>
                         </div>
+                        <div class="num"><img src="logo-green.svg" alt="Logo" /></div>
                     </div>
-                    <div dir="rtl" style="display:flex;flex-direction:column;justify-content:space-between;gap:8px;height:100%">
-                        <div style="font-size:14px;color:rgba(30,41,59,0.85)">محتوى إضافي للكارت الكبير</div>
-                        <div style="display:flex;justify-content:space-between;align-items:center">
-                            <div style="font-size:12px;color:rgba(30,41,59,0.65)">عرض المحتوى</div>
+                    <div dir="rtl" style="display:flex;flex-direction:column;justify-content:space-between;gap:8px;height:100%;text-align:right">
+                        <div style="font-size:14px;color:rgba(30,41,59,0.85);text-align:right">هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة لقد تم توليد هذا النص</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;direction:rtl">
+                            <div style="font-size:12px;color:rgba(30,41,59,0.65);text-align:right">عرض المحتوى</div>
                             <svg class="arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </div>
                     </div>
@@ -567,8 +602,8 @@
             </div>
 
             <div class="footer">
-                <div>مصنوع بـ ❤️ Gawdah</div
-                <div>© الحقوق محفوظة لـ Gawdah</div>
+                <div>مصنوع بـ ❤️ نص تجريبي</div>
+                <div>© جميع الحقوق محفوظة</div>
             </div>
         </div>
     </div>
@@ -594,15 +629,15 @@
                         box.style.cursor = 'pointer'
                         box.className = 'box'
                         box.innerHTML = `
-                <div class="topRow">
-                    <div class="num">${i}</div>
-                    <div>
+                <div class="topRow" dir="rtl" style="justify-content: flex-start">
+                    <div style="text-align: right; flex: 1">
                         <div class="title">الصندوق ${i}</div>
-                        <div class="meta">انقر للفتح</div>
+                        <div class="meta">نص تجريبي</div>
                     </div>
+                    <div class="num"><img src="logo-green.svg" alt="Logo" /></div>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div style="font-size:12px;color:rgba(30,41,59,0.65)">عرض المحتوى</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;direction:rtl">
+                    <div style="font-size:12px;color:rgba(30,41,59,0.65);text-align:right">عرض المحتوى</div>
                     <svg class="arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </div>
             `
