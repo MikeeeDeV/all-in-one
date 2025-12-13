@@ -4,10 +4,10 @@ const folderMap = {
     2: 'https://qu-media.gawdah.org/app/',
     3: 'https://qu-medicine.gawdah.org/app/',
     4: 'http://qu-centre.gawdah.org/',
-    5: 'fifth/index.html',
-    6: 'sixth/index.html',
-    7: 'seventh/index.html',
-    8: 'eighth/index.html'
+    5: 'https://qu-sposci.gawdah.org/app/',
+    6: 'https://qu-science.gawdah.org/app/',
+    7: 'https://qu-dental.gawdah.org/app/',
+    8: 'https://qu-pt.gawdah.org/app/'
 }
 
 // Box content data
@@ -29,6 +29,30 @@ const boxContent = {
         meta: 'ضمان جودة التعليم الطبي',
         desc: 'متابعة البرامج الطبية والتدريب السريري والبحوث',
         logo: 'medical.jpeg'
+    },
+    5: {
+        title: 'منصة جودة كلية علوم رياضية',
+        meta: 'ضمان جودة التعليم الرياضي',
+        desc: 'متابعة برامج التربية الرياضية والتدريب الرياضي',
+        logo: 'logo.png'
+    },
+    6: {
+        title: 'منصة جودة كلية علوم',
+        meta: 'ضمان جودة التعليم العلمي',
+        desc: 'متابعة البرامج العلمية والمختبرات والبحوث',
+        logo: 'logo.png'
+    },
+    7: {
+        title: 'منصة جودة كلية طب الأسنان',
+        meta: 'ضمان جودة التعليم السني',
+        desc: 'متابعة البرامج السنية والتدريب السريري',
+        logo: 'logo.png'
+    },
+    8: {
+        title: 'منصة جودة كلية العلاج الطبيعي',
+        meta: 'ضمان جودة التعليم العلاجي',
+        desc: 'متابعة برامج العلاج الطبيعي والتدريب العلاجي',
+        logo: 'logo.png'
     }
 }
 
