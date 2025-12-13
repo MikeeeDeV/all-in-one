@@ -1,13 +1,35 @@
 // Folder mapping for boxes (now 8)
 const folderMap = {
-    1: 'first/index.html',
-    2: 'second/index.html',
-    3: 'third/index.html',
-    4: 'fourth/index.html',
+    1: 'https://qu-pharma.gawdah.org/app/',
+    2: 'https://qu-media.gawdah.org/app/',
+    3: 'https://qu-medicine.gawdah.org/app/',
+    4: 'http://qu-centre.gawdah.org/',
     5: 'fifth/index.html',
     6: 'sixth/index.html',
     7: 'seventh/index.html',
     8: 'eighth/index.html'
+}
+
+// Box content data
+const boxContent = {
+    1: {
+        title: 'منصة جودة كلية الصيدلة',
+        meta: 'ضمان جودة التعليم الصيدلاني',
+        desc: 'متابعة البرامج والمقررات والمعامل والبحوث',
+        logo: 'pharma.jpg'
+    },
+    2: {
+        title: 'منصة جودة كلية الإعلام',
+        meta: 'ضمان جودة التعليم الإعلامي',
+        desc: 'متابعة برامج الإعلام والصحافة والعلاقات العامة',
+        logo: 'meida.jpg'
+    },
+    3: {
+        title: 'منصة جودة كلية الطب',
+        meta: 'ضمان جودة التعليم الطبي',
+        desc: 'متابعة البرامج الطبية والتدريب السريري والبحوث',
+        logo: 'medical.jpeg'
+    }
 }
 
 // Create 7 boxes (skip 4 because it is in HTML)
@@ -17,16 +39,24 @@ for (let i = 1; i <= 8; i++) {
         const box = document.createElement('div')
         box.style.cursor = 'pointer'
         box.className = 'box'
+        box.setAttribute('data-box-id', i)
+        
+        const content = boxContent[i] || {
+            title: `منصة كلية ${i}`,
+            meta: 'منصة جودة متخصصة',
+            desc: 'نظام إدارة الجودة للكلية'
+        }
+        
         box.innerHTML = `
                 <div class="topRow" dir="rtl" style="justify-content: flex-start">
                     <div style="text-align: right; flex: 1">
-                        <div class="title">الصندوق ${i}</div>
-                        <div class="meta">نص تجريبي</div>
+                        <div class="title" style="font-size: 16px; line-height: 1.3; font-weight: 600;">${content.title}</div>
+                        <div class="meta" style="font-size: 12px; margin-top: 4px;">${content.meta}</div>
                     </div>
-                    <div class="num"><img src="logo-green.svg" alt="Logo" /></div>
+                    <div class="num"><img src="${content.logo || 'logo.png'}" alt="Logo" /></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;direction:rtl">
-                    <div style="font-size:12px;color:rgba(30,41,59,0.65);text-align:right">عرض المحتوى</div>
+                    <div style="font-size:13px;color:rgba(30,41,59,0.65);text-align:right;line-height:1.4;">${content.desc}</div>
                     <svg class="arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </div>
             `
@@ -35,8 +65,7 @@ for (let i = 1; i <= 8; i++) {
 
 // Attach navigation handler to all boxes based on their number
 document.querySelectorAll('.box').forEach((el) => {
-    const numEl = el.querySelector('.num')
-    const idx = numEl ? parseInt(numEl.textContent) : null
+    const idx = el.getAttribute('data-box-id') ? parseInt(el.getAttribute('data-box-id')) : null
     if (idx && folderMap[idx]) {
         el.addEventListener('click', () => { window.location.href = folderMap[idx] })
     }
