@@ -161,18 +161,21 @@ function playCinematicName() {
 
 window.addEventListener('name:play', playCinematicName);
 
-// Counters: animate 4 stats from 0 to their target (500)
+// Counters: animate 4 stats from 0 to their target
 function playCounters() {
     const counts = document.querySelectorAll('.count')
-    counts.forEach((el) => {
+    counts.forEach((el, index) => {
         const target = parseInt(el.getAttribute('data-target')) || 0
         const obj = { val: 0 }
+        // العداد الأول أسرع بشكل بسيط
+        const duration = index === 0 ? 2 : 2.2
         gsap.to(obj, {
             val: target,
-            duration: 2.2,
+            duration: duration,
             ease: 'power3.out',
             onUpdate: function() {
-                el.textContent = Math.floor(obj.val).toLocaleString('en-US')
+                const num = Math.floor(obj.val).toLocaleString('en-US')
+                el.textContent = index === 1 ? num + '+' : num
             }
         })
     })
