@@ -231,23 +231,6 @@ document.querySelector('.photo').classList.add('breathing-glow')
 
 
 
-// Floating particles from boxes on hover
-document.querySelectorAll('.box').forEach(box => {
-    box.addEventListener('mouseenter', () => {
-        for (let i = 0; i < 3; i++) {
-            setTimeout(() => {
-                const particle = document.createElement('div')
-                particle.className = 'particle'
-                const rect = box.getBoundingClientRect()
-                particle.style.left = (rect.left + Math.random() * rect.width) + 'px'
-                particle.style.top = rect.bottom + 'px'
-                particle.style.background = ['#8b5cf6', '#06b6d4', '#f97316'][Math.floor(Math.random() * 3)]
-                document.body.appendChild(particle)
-                setTimeout(() => particle.remove(), 4000)
-            }, i * 200)
-        }
-    })
-})
 
 // Auto-animate boxes periodically
 setInterval(() => {

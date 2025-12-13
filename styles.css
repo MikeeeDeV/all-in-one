@@ -398,12 +398,12 @@ body {
 /* Floating particles */
 .particle {
     position: absolute;
-    width: 4px;
-    height: 4px;
+    width: 2px;
+    height: 2px;
     background: #8b5cf6;
     border-radius: 50%;
     pointer-events: none;
-    animation: float-up 4s linear infinite
+    animation: float-up 3s linear infinite
 }
 
 @keyframes float-up {
