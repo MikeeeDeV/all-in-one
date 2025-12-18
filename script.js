@@ -58,19 +58,19 @@ const boxContent = {
 
 // Create 7 boxes (skip 4 because it is in HTML)
 const boxesEl = document.getElementById('boxes')
-for (let i = 1; i <= 8; i++) {
-    if (i === 4) continue // large card is static in HTML
+const order = [1, 2, 3, 5, 7, 8, 6]
+for (let i of order) {
     const box = document.createElement('div')
     box.style.cursor = 'pointer'
     box.className = 'box'
     box.setAttribute('data-box-id', i)
-    
+
     const content = boxContent[i] || {
         title: `منصة كلية ${i}`,
         meta: 'منصة جودة متخصصة',
         desc: 'نظام إدارة الجودة للكلية'
     }
-    
+
     box.innerHTML = `
         <div class="topRow" dir="rtl" style="justify-content: flex-start">
             <div style="text-align: right; flex: 1">
