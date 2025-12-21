@@ -164,6 +164,15 @@ body {
      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
+.box:hover .num {
+     transform: scale(1.1);
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.box:hover .num img {
+     transform: scale(1.05);
+}
+
 .box.large {
      width: 100%;
      height: 300px;
@@ -174,6 +183,16 @@ body {
      background: #f0fdf4;
 }
 
+.box.large .num {
+     width: 80px;
+     height: 80px;
+}
+
+.box.large .num img {
+     width: 64px;
+     height: 64px;
+}
+
 .box .topRow {
      display: flex;
      align-items: center;
@@ -181,19 +200,22 @@ body {
 }
 
 .box .num {
-     width: 48px;
-     height: 48px;
-     border-radius: 8px;
+     width: 64px;
+     height: 64px;
+     border-radius: 12px;
      display: grid;
      place-items: center;
-     background: #f3f4f6;
-     border: 1px solid #d1d5db;
+     background: #ffffff;
+     border: 1px solid #e5e7eb;
+     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .box .num img {
-     width: 36px;
-     height: 36px;
+     width: 48px;
+     height: 48px;
      object-fit: contain;
+     transition: transform 0.3s ease;
 }
 
 .box .title {
@@ -263,6 +285,26 @@ body {
           grid-row: auto;
           height: auto;
           min-height: 200px;
+     }
+
+     .box .num {
+          width: 48px;
+          height: 48px;
+     }
+
+     .box .num img {
+          width: 36px;
+          height: 36px;
+     }
+
+     .box.large .num {
+          width: 60px;
+          height: 60px;
+     }
+
+     .box.large .num img {
+          width: 48px;
+          height: 48px;
      }
 
      .stats {
