@@ -1,13 +1,13 @@
 // Folder mapping for boxes (now 8)
 const folderMap = {
-    1: 'https://qu-pharma.gawdah.org/app/',
-    2: 'https://qu-media.gawdah.org/app/',
-    3: 'https://qu-medicine.gawdah.org/app/',
-    4: 'http://qu-centre.gawdah.org/',
-    5: 'https://qu-sposci.gawdah.org/app/',
-    6: 'https://qu-science.gawdah.org/app/',
-    7: 'https://qu-dental.gawdah.org/app/',
-    8: 'https://qu-pt.gawdah.org/app/'
+    1: 'Qu-Pharma.svu.edu.eg',
+    2: 'Qu-media.svu.edu.eg',
+    3: 'Qu-medicine.svu.edu.eg',
+    4: 'Qu-centre.svu.edu.eg',
+    5: 'Qu-sposci.svu.edu.eg',
+    6: 'Qu-science.svu.edu.eg',
+    7: 'Qu-dental.svu.edu.eg',
+    8: 'Qu-pt.svu.edu.eg'
 }
 
 // Box content data
@@ -95,16 +95,6 @@ document.querySelectorAll('.box').forEach((el) => {
     }
 })
 
-// Simple fade-in animations
-gsap.from('#mainCard', { duration: 0.8, y: 20, opacity: 0, ease: 'power2.out' })
-gsap.from('.top', { duration: 0.6, y: 10, opacity: 0, delay: 0.2 })
-gsap.from('.stats', { duration: 0.6, y: 10, opacity: 0, delay: 0.4 })
-gsap.from('.box', { duration: 0.6, y: 10, opacity: 0, stagger: 0.1, delay: 0.6 })
-
-// Simple name display
-const nameContainer = document.getElementById('nameBadge');
-nameContainer.textContent = 'Gawdah';
-
 // Counters: animate 4 stats from 0 to their target
 function playCounters() {
     const counts = document.querySelectorAll('.count')
@@ -125,12 +115,15 @@ function playCounters() {
     })
 }
 
-// Small interactive badge: allow editing name by double click
+// Optional interactive badge (if present): allow editing name by double click
 const badge = document.getElementById('nameBadge')
-badge.addEventListener('dblclick', () => {
-    const name = prompt('أدخل اسم العرض:', badge.textContent) || badge.textContent
-    badge.textContent = name
-})
+if (badge) {
+    badge.textContent = 'Gawdah'
+    badge.addEventListener('dblclick', () => {
+        const name = prompt('أدخل اسم العرض:', badge.textContent) || badge.textContent
+        badge.textContent = name
+    })
+}
 
 // Accessibility: keyboard focus styles + enter to click
 document.querySelectorAll('.box').forEach((b) => {
@@ -146,8 +139,129 @@ document.querySelectorAll('.box').forEach((b) => {
 const img = document.getElementById('profilePhoto')
 img.onerror = () => { img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" fill="%236b7280" font-size="24" dominant-baseline="middle" text-anchor="middle">صورة غير متوفرة</text></svg>' }
 
-// START ANIMATIONS ON LOAD
-window.addEventListener('load', () => {
-    // start counters after load
+// Loading screen animations
+function initLoadingAnimations() {
+    if (typeof gsap === 'undefined') {
+        console.error('GSAP not loaded!');
+        return;
+    }
+
+    const mainLogo = document.getElementById('mainLogo');
+    const secondaryLogo = document.getElementById('secondaryLogo');
+    const loadingText = document.getElementById('loadingText');
+    const loadingProgress = document.getElementById('loadingProgress');
+    const loadingScreen = document.getElementById('loading-screen');
+    const skipBtn = document.getElementById('skipBtn');
+
+    if (!mainLogo || !secondaryLogo || !loadingText || !loadingProgress || !loadingScreen) {
+        console.error('Some loading elements not found!');
+        return;
+    }
+
+    // Initial states
+    gsap.set([mainLogo, secondaryLogo], { scale: 0, rotation: -180 });
+    gsap.set(loadingText, { y: 30, opacity: 0 });
+
+    // Main logo animation sequence
+    const tl = gsap.timeline();
+
+    tl.to(mainLogo, {
+        scale: 1,
+        rotation: 0,
+        duration: 1.2,
+        ease: "back.out(1.7)",
+        filter: "drop-shadow(0 12px 24px rgba(22, 163, 74, 0.4))"
+    })
+    .to(secondaryLogo, {
+        scale: 1,
+        rotation: 360,
+        duration: 0.8,
+        ease: "power2.out"
+    }, "-=0.8")
+    .to(loadingText, {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        ease: "power2.out"
+    }, "-=0.4");
+
+    // Continuous floating animation for logos
+    gsap.to(mainLogo, {
+        y: -10,
+        duration: 2,
+        ease: "power2.inOut",
+        yoyo: true,
+        repeat: -1
+    });
+
+    gsap.to(secondaryLogo, {
+        y: -8,
+        rotation: 365,
+        duration: 2.5,
+        ease: "power2.inOut",
+        yoyo: true,
+        repeat: -1
+    });
+
+    // Simple loading with progress animation
+    gsap.to(loadingProgress, {
+        width: "100%",
+        duration: 3,
+        ease: "power2.inOut",
+        onComplete: () => {
+            // Hide loading screen with elegant animation
+            gsap.to(loadingScreen, {
+                opacity: 0,
+                duration: 1.2,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    loadingScreen.style.display = 'none';
+                    // Start main page animations
+                    startMainAnimations();
+                }
+            });
+        }
+    });
+
+    // Skip button: immediately end splash and show main app
+    if (skipBtn) {
+        skipBtn.addEventListener('click', () => {
+            try {
+                gsap.killTweensOf(loadingProgress)
+            } catch (e) { /* ignore */ }
+            if (loadingScreen) {
+                gsap.to(loadingScreen, { opacity: 0, duration: 0.35, onComplete() { loadingScreen.style.display = 'none' } })
+            }
+            startMainAnimations();
+        })
+    }
+}
+
+function startMainAnimations() {
+    // Show the main content
+    const wrap = document.querySelector('.wrap');
+    if (wrap) {
+        wrap.classList.add('loaded');
+    }
+
+    // Original animations
+    gsap.from('#mainCard', { duration: 0.8, y: 20, opacity: 0, ease: 'power2.out' });
+    gsap.from('.top', { duration: 0.6, y: 10, opacity: 0, delay: 0.2 });
+    gsap.from('.stats', { duration: 0.6, y: 10, opacity: 0, delay: 0.4 });
+    gsap.from('.box', { duration: 0.6, y: 10, opacity: 0, stagger: 0.1, delay: 0.6 });
+
+    // Start counters
     try { playCounters() } catch (e) { /* ignore if missing */ }
-})
+}
+
+// START ANIMATIONS IMMEDIATELY
+initLoadingAnimations();
+
+// Fallback: hide loading screen after 5 seconds if not hidden
+setTimeout(() => {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen && loadingScreen.style.display !== 'none') {
+        loadingScreen.style.display = 'none';
+        startMainAnimations();
+    }
+}, 5000);

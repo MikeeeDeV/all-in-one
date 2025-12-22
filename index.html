@@ -41,6 +41,26 @@
 </head>
 
 <body>
+    <!-- Loading / Splash Screen -->
+    <div id="loading-screen" class="loading-screen" role="dialog" aria-label="شاشة تحميل">
+        <div class="loading-content">
+            <div class="logo-container">
+                <img src="media-removebg-preview.png" alt="Gawdah Logo" class="main-logo" id="mainLogo" />
+                <img src="logo-green.svg" alt="Green Logo" class="secondary-logo" id="secondaryLogo" />
+            </div>
+            <div class="splash-headline">أهلاً بك في منصة جودة</div>
+            <div class="loading-text" id="loadingText">جار التحميل</div>
+
+            <div class="loading-bar" aria-hidden="true">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+
+            <div style="margin-top:18px;display:flex;gap:10px;justify-content:center;align-items:center;">
+                <button id="skipBtn" class="skip-btn" aria-label="تخطي المقدمة">تخطي</button>
+            </div>
+        </div>
+    </div>
+
     <div id="app" class="wrap">
         <div class="card" id="mainCard">
             <div class="top">
