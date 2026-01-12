@@ -1,13 +1,13 @@
 // Folder mapping for boxes (now 8)
 const folderMap = {
-    1: 'Qu-Pharma.svu.edu.eg',
-    2: 'Qu-media.svu.edu.eg',
-    3: 'Qu-medicine.svu.edu.eg',
-    4: 'Qu-centre.svu.edu.eg',
-    5: 'Qu-sposci.svu.edu.eg',
-    6: 'Qu-science.svu.edu.eg',
-    7: 'Qu-dental.svu.edu.eg',
-    8: 'Qu-pt.svu.edu.eg'
+    1: 'https://Qu-Pharma.svu.edu.eg',
+    2: 'https://Qu-media.svu.edu.eg',
+    3: 'https://Qu-medicine.svu.edu.eg',
+    4: 'https://Qu-centre.svu.edu.eg',
+    5: 'https://Qu-sposci.svu.edu.eg',
+    6: 'https://Qu-science.svu.edu.eg',
+    7: 'https://Qu-dental.svu.edu.eg',
+    8: 'https://Qu-pt.svu.edu.eg'
 }
 
 // Box content data
